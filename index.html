@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>vimtips-search</title>
+<style>
+  h1 {
+    font-family:sans-serif;
+    font-size: 120%;
+  }
+  .list {
+    font-family:sans-serif;
+    margin:0;
+    padding:0 5px;
+  }
+  .list > li {
+    display:block;
+    background-color: #eee;
+    padding:5px;
+    box-shadow: inset 0 1px 0 #fff;
+  }
+  pre {
+    margin:0;
+  }
+  input {
+    border:solid 1px #ccc;
+    border-radius: 5px;
+    padding:7px 14px;
+    margin: 10px 5px;
+  }
+  input:focus {
+    outline:none;
+    border-color:#aaa;
+  }
+</style>
+</head>
+<body>
+<div id="tips">
+  <h1>Fuzzy Search vim tips from http://zzapper.co.uk/vimtips.html</h1>
+
+  <input class="fuzzy-search" placeholder="Search" />
+
+  <ul class="list">
+  </ul>
+
+</div>
+
+<script src="list.min.js"></script>
+<script src="list.fuzzysearch.min.js"></script>
+
+<script>
+
+  function ajax(opts, callback) {
+    opts = opts || {};
+    opts = {
+      url: opts.url || null,
+      method: opts.method || 'get',
+      sync: opts.async || true,
+      contentType: opts.contentType || null,
+      data: opts.data || null
+    };
+    callback = callback || function(xhr){};
+
+    var xhr = new XMLHttpRequest();
+
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4) {
+        callback(xhr);
+      }
+    };
+
+    if (opts.contentType) {
+      xhr.setRequestHeader('Content-Type', opts.contentType);
+    }
+    xhr.open(opts.method.toUpperCase(), opts.url, opts.async);
+    xhr.send(opts.data);
+  }
+
+  ajax({url: 'vimtips.json'}, function(xhr) {
+    console.log(xhr);
+    if (xhr.status != 200) {
+      console.error('error loading data!');
+    }
+
+    var options = {
+      valueNames: [ 'line' ],
+      item: '<li><pre class="line"></pre></li>',
+      plugins: [ ListFuzzySearch() ]
+    };
+    var values = JSON.parse(xhr.responseText);
+    var tipList = new List('tips', options, values);
+  });
+
+</script>
+</body>
+</html>
