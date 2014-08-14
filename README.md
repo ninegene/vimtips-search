@@ -1,3 +1,7 @@
+# vimtips-search
+
+Fuzzy Search vim tips from http://zzapper.co.uk/vimtips.html
+
 ##Setup
 
 ```bash
